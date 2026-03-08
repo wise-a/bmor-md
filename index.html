@@ -108,16 +108,14 @@
         #preview-content h1 { font-size: 2.5rem; font-weight: 800; border-bottom: 4px solid var(--secondary); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
         #preview-content h2 { font-size: 1.75rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: var(--primary); }
         #preview-content h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        #preview-content h4 { font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; color: var(--text); }
+        #preview-content h4 { font-size: 1.2rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; color: var(--text); }
         #preview-content h5 { font-size: 1.1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--text); opacity: 0.9; }
         #preview-content h6 { font-size: 1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--text); opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; }
         
         #preview-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
         #preview-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
-        #preview-content ul ul, #preview-content ol ol, #preview-content ul ol, #preview-content ol ul { margin-bottom: 0; }
-        #preview-content li { margin-bottom: 0.25rem; }
-
-        /* Task List Cleanup */
+        
+        /* Task List Support */
         .task-list-item { list-style-type: none !important; margin-left: -1rem !important; display: flex !important; align-items: flex-start !important; gap: 0.5rem; }
         .task-list-item input[type="checkbox"] { margin-top: 0.4rem; accent-color: var(--primary); cursor: default; }
 
@@ -323,19 +321,36 @@
             const themes = ['sunny', 'electric', 'natural', 'custom'];
             let currentThemeIndex = 0;
 
+            const googleFonts = [
+                // Serifs
+                "Playfair Display", "Roboto Slab", "Merriweather", "Lora", "Noto Serif", "PT Serif", "Libre Baskerville", "EB Garamond", "IBM Plex Serif",
+                // Sans
+                "IBM Plex Sans", "Roboto", "Open Sans", "Inter", "Montserrat", "Lato", "Roboto Condensed", "Noto Sans", "Raleway", "Nunito", "Nunito Sans", "DM Sans", "Rubik", "Ubuntu", "Archivo", "Work Sans", "PT Sans", "Space Grotesk", "Oxanium", "Michroma",
+                // Display / Hand
+                "Permanent Marker", "Comic Neue", "Merienda", "Handlee", "Pangolin", "Coming Soon", "Overlock", "Rancho", "Faculty Glyphic", "Amarante", "Jersey 25", "Doto", "Jacquard 12", "Tiny5", "Micro 5", "Jacquarda Bastarda 9", "Workbench", "Bodoni Moda", "Germania One", "UnifrakturMaguntia", "Vast Shadow", "Monofett", "Rubik Doodle Shadow", "Foldit", "Rock 3D", "Monoton", "Tapestry", "Neonderthaw", "Ribeye Marrow", "Kumar One Outline", "Geostar",
+                // Scripts
+                "Dancing Script", "Lobster", "Great Vibes", "Sacramento", "Allura", "Cookie", "Parisienne", "Tangerine", "Italianno", "Pinyon Script", "Pacifico", "Caveat", "Indie Flower", "Comfortaa", "Lobster Two",
+                // Grotesque / Other
+                "Bricolage Grotesque", "Josefin Sans", "Oswald", "Fjalla One", "Barlow", "Smooch Sans", "Arimo", "Shadows Into Light", "Acme", "Bree Serif", "Flow Block", "Redacted Script"
+            ];
+
+            const googleMonoFonts = [
+                "Roboto Mono", "Inconsolata", "Source Code Pro", "JetBrains Mono", "IBM Plex Mono", "DM Mono", "Space Mono", "Geist Mono", "PT Mono", "Fira Code", "VT323", "Share Tech Mono", "Ubuntu Mono", "Anonymous Pro", "Fira Mono", "Oxygen Mono", "Sometype Mono", "B612 Mono"
+            ];
+
             marked.setOptions({ gfm: true, breaks: true });
 
             function renderMath(text) {
-                // Normalize and handle common copy-paste artifacts like \+ and \=
+                // Pre-process common escaped characters like \+ and \=
                 text = text.replace(/\\([\+\=\-\*])/g, '$1');
                 text = text.replace(/\u00a0/g, ' ');
 
-                // Block Math
+                // Block Math $$ ... $$
                 text = text.replace(/\$\$([\s\S]+?)\$\$/g, (match, p1) => {
                     try { return `<div class="katex-display">${katex.renderToString(p1.trim(), { displayMode: true, throwOnError: false })}</div>`; }
                     catch (e) { return match; }
                 });
-                // Inline Math
+                // Inline Math $ ... $
                 text = text.replace(/\$([^\$\n]+?)\$/g, (match, p1) => {
                     try { return katex.renderToString(p1.trim(), { displayMode: false, throwOnError: false }); }
                     catch (e) { return match; }
@@ -348,13 +363,11 @@
                 const defRegex = /^\\?\[\^([^\]]+)\]:\s*([\s\S]+?)(?=\n\\?\[\^|\n\n|\n$|$)/gm;
                 let notes = [];
                 
-                // Extract definitions
                 text = text.replace(defRegex, (m, id, content) => { 
                     notes.push({ id, content: content.trim() }); 
                     return ""; 
                 });
 
-                // Replace references
                 text = text.replace(fnRegex, (m, id) => {
                     return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-${id}">${id}</a></sup>`;
                 });
@@ -370,7 +383,6 @@
             }
 
             function processTaskLists(html) {
-                // Expanded support for [x], [s], [?], etc.
                 return html.replace(/<li>\s*\[([xXsS\?\s])\]\s*/g, (m, char) => {
                     const isChecked = ['x', 'X', 's', 'S'].includes(char) ? 'checked' : '';
                     return `<li class="task-list-item"><input type="checkbox" disabled ${isChecked}> `;
@@ -546,8 +558,10 @@
                 const mi = document.getElementById('markdown-input');
                 const zb = document.getElementById('zenBtn');
                 
+                if (!pp || !mi || !zb) return;
+
                 const isZen = pp.classList.toggle('hidden-pane');
-                op.classList.add('hidden-pane');
+                if (op) op.classList.add('hidden-pane');
                 
                 mi.classList.toggle('max-w-7xl', isZen);
                 mi.classList.toggle('mx-auto', isZen);
@@ -567,21 +581,22 @@
                 setTimeout(() => t.classList.remove('visible'), 3000);
             }
 
-            const g1 = ["Inter", "Roboto", "Open Sans", "Montserrat", "Lato", "Poppins", "Playfair Display", "Merriweather", "Lora", "Fira Sans", "Raleway", "Quicksand", "Dancing Script", "Spectral"];
-            const g2 = ["Fira Code", "Source Code Pro", "Roboto Mono", "JetBrains Mono", "Space Mono", "IBM Plex Mono"];
-            const p1 = document.getElementById('google-font-picker');
-            g1.sort().forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; p1.appendChild(o); });
-            const p2 = document.getElementById('google-mono-picker');
-            g2.sort().forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; p2.appendChild(o); });
+            function populatePickers() {
+                const p1 = document.getElementById('google-font-picker');
+                googleFonts.sort().forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; p1.appendChild(o); });
+                const p2 = document.getElementById('google-mono-picker');
+                googleMonoFonts.sort().forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; p2.appendChild(o); });
+            }
 
+            populatePickers();
             const st = localStorage.getItem('bmor_md_theme') || 'sunny';
             const sp = localStorage.getItem('bmor_custom_palette');
             if (sp) applyCustomThemeVars(JSON.parse(sp));
             applyTheme(st);
             const sf = localStorage.getItem('bmor_md_font') || 'Inter';
-            p1.value = sf; changeGoogleFont(sf);
+            document.getElementById('google-font-picker').value = sf; changeGoogleFont(sf);
             const sm = localStorage.getItem('bmor_md_mono_font') || 'Fira Code';
-            p2.value = sm; changeMonoFont(sm);
+            document.getElementById('google-mono-picker').value = sm; changeMonoFont(sm);
             applyCustomFonts();
 
             markdownInput.value = localStorage.getItem('bmor_md_content') || `# Welcome to BMOR\n\n#### Level 4 Heading\n##### Level 5 Heading\n###### Level 6 Heading\n\n- [x] Done\n- [s] Working\n- [ ] Pending\n\nMath: $a^2 + b^2 = c^2$\n\nFootnote test [^1]\n\n[^1]: Footnote here.`;
