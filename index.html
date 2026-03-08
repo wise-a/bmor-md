@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <style id="dynamic-fonts"></style>
+    <style id="custom-theme-vars"></style>
     <style>
         :root {
             --text: #191102;
@@ -148,14 +149,15 @@
         
         <div class="flex items-center gap-3">
             <button onclick="toggleTypography()" class="btn-action px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
-                Type
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h3.22L12 22h-3.22l1.9-12.62z"/><path d="M9.5 15.5h5"/><path d="M20 16a2 2 0 0 1-2 2h-1c-1.1 0-2-1.1-2-2v-1a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2z"/><path d="M4 16a2 2 0 0 1-2 2H1c-1.1 0-2-1.1-2-2v-1a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2z"/></svg>
+                Settings
             </button>
             <button onclick="cycleTheme()" class="btn-action px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold min-w-[120px]">
                 <div id="theme-icon-container">
                     <svg id="icon-sunny" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
                     <svg id="icon-electric" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-2 10h9L11 22l2-10H5L13 2z"/></svg>
                     <svg id="icon-natural" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8a8 8 0 0 1-8 8"/><path d="M13 22c3 0 7-1 7-8"/></svg>
+                    <svg id="icon-custom" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                 </div>
                 <span id="theme-label">Sunny</span>
             </button>
@@ -176,25 +178,38 @@
         </div>
     </header>
 
-    <!-- Typography Panel -->
+    <!-- Settings Panel -->
     <div id="typography-panel" class="p-6 custom-scroll">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Typography Settings</h3>
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Studio Settings</h3>
         
+        <!-- Palette Section -->
+        <div class="mb-8 p-4 bg-slate-50 rounded-xl border border-slate-100">
+            <label class="block text-[10px] font-black uppercase tracking-tighter mb-3 opacity-50">Custom Palette Upload</label>
+            <div class="space-y-3">
+                <button onclick="document.getElementById('palette-upload').click()" class="w-full font-upload-btn py-3 bg-white hover:bg-slate-50 transition-colors">
+                    Upload .txt Palette File
+                </button>
+                <textarea id="palette-input" class="w-full h-24 p-2 text-[10px] font-mono border border-slate-200 rounded-lg outline-none focus:border-primary resize-none" placeholder="Paste format:&#10;--text: #191102;&#10;--background: #fbf9f6;&#10;--primary: #eea629;&#10;..."></textarea>
+                <button onclick="applyManualPalette()" class="w-full py-2 bg-slate-900 text-white text-[10px] font-bold uppercase rounded-lg hover:bg-black transition-colors">Apply Manual Palette</button>
+            </div>
+            <input type="file" id="palette-upload" class="hidden" accept=".txt,.css" onchange="handlePaletteUpload(this)">
+        </div>
+
         <div class="mb-6">
             <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Main Font Library</label>
-            <select id="google-font-picker" onchange="changeGoogleFont(this.value)" class="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary bg-slate-50">
+            <select id="google-font-picker" onchange="changeGoogleFont(this.value)" class="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary bg-white">
             </select>
         </div>
 
         <div class="mb-6">
             <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Monospace Font Library</label>
-            <select id="google-mono-picker" onchange="changeMonoFont(this.value)" class="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary bg-slate-50 font-mono">
+            <select id="google-mono-picker" onchange="changeMonoFont(this.value)" class="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary bg-white font-mono">
             </select>
         </div>
 
         <div class="space-y-6 pt-4 border-t border-slate-100">
             <div>
-                <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Custom Main Font</label>
+                <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Custom Main Font Files</label>
                 <div class="grid grid-cols-2 gap-2">
                     <div class="font-upload-btn" id="btn-regular" onclick="document.getElementById('upload-regular').click()">Regular</div>
                     <div class="font-upload-btn" id="btn-bold" onclick="document.getElementById('upload-bold').click()">Bold</div>
@@ -204,11 +219,11 @@
             </div>
 
             <div>
-                <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Custom Monospace Font</label>
+                <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Custom Monospace Font File</label>
                 <div class="font-upload-btn w-full py-3" id="btn-mono" onclick="document.getElementById('upload-mono').click()">Upload Custom Mono File</div>
             </div>
 
-            <button onclick="resetFonts()" class="w-full py-2 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100">Clear All Settings</button>
+            <button onclick="resetFonts()" class="w-full py-2 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100">Factory Reset Studio</button>
         </div>
 
         <!-- Hidden Inputs -->
@@ -255,7 +270,7 @@
         const editorPane = document.getElementById('editor-pane');
         const previewPane = document.getElementById('preview-pane');
         
-        const themes = ['sunny', 'electric', 'natural'];
+        const themes = ['sunny', 'electric', 'natural', 'custom'];
         let currentThemeIndex = 0;
 
         const googleFonts = [
@@ -287,6 +302,59 @@
             localStorage.setItem('bmor_md_content', content);
         }
 
+        // --- Custom Palette Logic ---
+        function handlePaletteUpload(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                document.getElementById('palette-input').value = text;
+                processPalette(text);
+            };
+            reader.readAsText(file);
+        }
+
+        function applyManualPalette() {
+            const text = document.getElementById('palette-input').value;
+            processPalette(text);
+        }
+
+        function processPalette(text) {
+            const lines = text.split('\n');
+            const palette = {};
+            const keys = ['text', 'background', 'primary', 'secondary', 'accent'];
+            
+            lines.forEach(line => {
+                const match = line.match(/--(text|background|primary|secondary|accent):\s*(#[0-9a-fA-F]{3,6});/);
+                if (match) {
+                    palette[match[1]] = match[2];
+                }
+            });
+
+            if (Object.keys(palette).length < 5) {
+                showToast("Error: Missing some colors in palette!");
+                return;
+            }
+
+            localStorage.setItem('bmor_custom_palette', JSON.stringify(palette));
+            applyCustomThemeVars(palette);
+            applyTheme('custom');
+            currentThemeIndex = 3; // Jump to custom slot
+            showToast("Custom Palette Applied!");
+        }
+
+        function applyCustomThemeVars(palette) {
+            const styleTag = document.getElementById('custom-theme-vars');
+            let css = `body.theme-custom {\n`;
+            for (const [key, val] of Object.entries(palette)) {
+                css += `  --${key}: ${val};\n`;
+            }
+            css += `}`;
+            styleTag.innerHTML = css;
+        }
+
+        // --- Typography & Files ---
         function toggleTypography() {
             document.getElementById('typography-panel').classList.toggle('visible');
         }
@@ -298,7 +366,6 @@
                 opt.value = font; opt.textContent = font;
                 picker.appendChild(opt);
             });
-
             const monoPicker = document.getElementById('google-mono-picker');
             googleMonoFonts.sort().forEach(font => {
                 const opt = document.createElement('option');
@@ -343,7 +410,7 @@
                 customData[fontKey] = base64;
                 localStorage.setItem('bmor_custom_fonts', JSON.stringify(customData));
                 applyCustomFonts();
-                showToast(`Applied custom ${target === 'mono' ? 'Monospace' : style + ' ' + weight}`);
+                showToast(`Loaded ${target === 'mono' ? 'Mono' : style + ' ' + weight}`);
             };
             reader.readAsDataURL(file);
         }
@@ -352,24 +419,19 @@
             const customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
             const styleTag = document.getElementById('dynamic-fonts');
             let css = '';
-            
             if (Object.keys(customData).length > 0) {
                 for (const [key, data] of Object.entries(customData)) {
                     if (key === 'font_mono') {
                         css += `@font-face { font-family: 'CustomMonoFont'; src: url('${data}'); }\n`;
-                        // Apply directly to body to override inline styles from library fonts
                         document.body.style.setProperty('--code-font', "'CustomMonoFont', monospace");
                     } else {
                         const [_, style, weight] = key.split('_');
                         css += `@font-face { font-family: 'CustomPreviewFont'; src: url('${data}'); font-weight: ${weight}; font-style: ${style}; }\n`;
                     }
                 }
-                
-                // If any main custom font weight is provided, set the preview font variable on body
                 if (customData['font_normal_400'] || customData['font_normal_700'] || customData['font_italic_400'] || customData['font_italic_700']) {
                     document.body.style.setProperty('--preview-font', "'CustomPreviewFont', sans-serif");
                 }
-                
                 styleTag.innerHTML = css;
             }
             updateFontButtonsStatus();
@@ -385,25 +447,33 @@
         }
 
         function resetFonts() {
-            localStorage.removeItem('bmor_custom_fonts');
-            localStorage.removeItem('bmor_md_font');
-            localStorage.removeItem('bmor_md_mono_font');
-            document.getElementById('dynamic-fonts').innerHTML = '';
+            localStorage.clear();
             location.reload();
         }
 
+        // --- Core Studio Logic ---
         function applyTheme(themeName) {
             themes.forEach(t => document.body.classList.remove(`theme-${t}`));
             if (themeName !== 'sunny') document.body.classList.add(`theme-${themeName}`);
+            
             document.getElementById('theme-label').textContent = themeName.charAt(0).toUpperCase() + themeName.slice(1);
             document.getElementById('icon-sunny').classList.toggle('hidden', themeName !== 'sunny');
             document.getElementById('icon-electric').classList.toggle('hidden', themeName !== 'electric');
             document.getElementById('icon-natural').classList.toggle('hidden', themeName !== 'natural');
+            document.getElementById('icon-custom').classList.toggle('hidden', themeName !== 'custom');
+            
             localStorage.setItem('bmor_md_theme', themeName);
         }
 
         function cycleTheme() {
             currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const theme = themes[currentThemeIndex];
+            
+            if (theme === 'custom' && !localStorage.getItem('bmor_custom_palette')) {
+                // Skip custom if none exists
+                currentThemeIndex = 0;
+            }
+            
             applyTheme(themes[currentThemeIndex]);
             showToast(`Theme: ${themes[currentThemeIndex].toUpperCase()}`);
         }
@@ -433,13 +503,21 @@
 
         function toggleZen() {
             const zenBtn = document.getElementById('zenBtn');
+            const editorPane = document.getElementById('editor-pane');
+            const previewPane = document.getElementById('preview-pane');
+            
             previewPane.classList.toggle('hidden-pane');
-            markdownInput.classList.toggle('max-w-4xl');
+            
+            // Adjust the width of the textarea to be responsive and comfortable
+            // Using a combination of w-full and max-widths for screen-size adjustment
+            markdownInput.classList.toggle('max-w-7xl');
             markdownInput.classList.toggle('mx-auto');
+            markdownInput.classList.toggle('w-full');
+            
             const isZen = previewPane.classList.contains('hidden-pane');
             zenBtn.style.backgroundColor = isZen ? 'var(--primary)' : '';
             zenBtn.style.color = isZen ? 'white' : '';
-            showToast(isZen ? "Zen Mode Active" : "Normal Mode");
+            showToast(isZen ? "Zen Mode: Spacious Focus" : "Split View Restored");
         }
 
         function showToast(msg) {
@@ -456,6 +534,13 @@
             
             const savedTheme = localStorage.getItem('bmor_md_theme') || 'sunny';
             currentThemeIndex = themes.indexOf(savedTheme);
+            if (currentThemeIndex === -1) currentThemeIndex = 0;
+
+            const savedPalette = localStorage.getItem('bmor_custom_palette');
+            if (savedPalette) {
+                applyCustomThemeVars(JSON.parse(savedPalette));
+            }
+
             applyTheme(savedTheme);
 
             const savedFont = localStorage.getItem('bmor_md_font') || 'Inter';
@@ -466,25 +551,24 @@
             document.getElementById('google-mono-picker').value = savedMono;
             changeMonoFont(savedMono);
 
-            // applyCustomFonts runs last and overrides variables on body
             applyCustomFonts();
 
             const saved = localStorage.getItem('bmor_md_content');
             markdownInput.value = saved || `# Welcome to BMOR 🎨
 
-Your space for high-end typography.
+Your space for high-end typography and custom color.
 
-### Code Typography
-You can now change the monospace font used in these code blocks and the editor! Try picking **JetBrains Mono** or uploading your own font file in the Type settings.
-
-\`\`\`javascript
-function checkTypography() {
-  const font = "Source Code Pro";
-  console.log(\`Rendering in \${font}...\`);
-}
+### Custom Palettes
+Upload a text file or paste a palette in the Settings panel. Format:
+\`\`\`css
+--text: #191102;
+--background: #fbf9f6;
+--primary: #eea629;
+--secondary: #daf584;
+--accent: #98f14f;
 \`\`\`
 
-> "BMOR: Because every character counts."`;
+> "Design is a conversation between clarity and aesthetics."`;
             updatePreview();
         };
 
