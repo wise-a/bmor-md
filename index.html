@@ -29,6 +29,7 @@
             --primary: #ff9901;
             --secondary: #67e4ff;
             --accent: #433bff;
+            --border: #e5e1da;
         }
 
         body.theme-natural {
@@ -37,6 +38,7 @@
             --primary: #aa8e65;
             --secondary: #d0bc9d;
             --accent: #c9ab7d;
+            --border: #e5e1da;
         }
 
         body {
@@ -46,6 +48,33 @@
             overflow: hidden;
             height: 100vh;
             transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Themed Layout Elements */
+        header {
+            background-color: var(--background);
+            border-bottom: 1px solid var(--border);
+            opacity: 0.95;
+            transition: all 0.3s ease;
+        }
+
+        #editor-pane {
+            background-color: var(--background);
+            border-right: 1px solid var(--border);
+            opacity: 0.98;
+            transition: all 0.3s ease;
+        }
+
+        .pane-header {
+            border-bottom: 1px solid var(--border);
+            background-color: var(--background);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        #preview-pane {
+            background-color: var(--background);
+            transition: all 0.3s ease;
         }
 
         .editor-textarea {
@@ -87,14 +116,13 @@
         .hidden-pane { flex: 0 0 0% !important; opacity: 0; pointer-events: none; overflow: hidden; }
         
         .btn-action {
-            background-color: white;
+            background-color: var(--background);
             border: 1px solid var(--border);
             color: var(--text);
             transition: all 0.2s;
         }
         .btn-action:hover {
             border-color: var(--primary);
-            background-color: var(--background);
             color: var(--primary);
             transform: translateY(-1px);
         }
@@ -108,12 +136,13 @@
             width: 320px;
             max-height: calc(100vh - 100px);
             overflow-y: auto;
-            background: white;
+            background: var(--background);
             border: 1px solid var(--border);
             border-radius: 16px;
             box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
             z-index: 50;
             display: none;
+            color: var(--text);
         }
         #typography-panel.visible { display: block; animation: slideIn 0.2s ease-out; }
 
@@ -130,14 +159,14 @@
             cursor: pointer;
             text-align: center;
         }
-        .font-upload-btn:hover { border-color: var(--primary); background: var(--background); }
+        .font-upload-btn:hover { border-color: var(--primary); background: var(--secondary); }
         .font-upload-btn.loaded { background: var(--secondary); border-style: solid; border-color: var(--primary); }
     </style>
 </head>
 <body class="flex flex-col">
 
     <!-- Header -->
-    <header class="h-16 flex items-center justify-between px-8 border-b border-[#e5e1da] bg-white/80 backdrop-blur-md z-10">
+    <header class="h-16 flex items-center justify-between px-8 backdrop-blur-md z-10">
         <div class="flex items-center gap-4">
             <div class="w-10 h-10 logo-box rounded-xl flex items-center justify-center shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="m8 7 4-4 4 4"/><path d="m8 17 4 4 4-4"/></svg>
@@ -162,7 +191,7 @@
                 <span id="theme-label">Sunny</span>
             </button>
 
-            <div class="h-6 w-[1px] bg-[#e5e1da] mx-1"></div>
+            <div class="h-6 w-[1px] bg-[var(--border)] mx-1"></div>
 
             <button onclick="triggerUpload()" class="btn-action px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -183,13 +212,13 @@
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Studio Settings</h3>
         
         <!-- Palette Section -->
-        <div class="mb-8 p-4 bg-slate-50 rounded-xl border border-slate-100">
+        <div class="mb-8 p-4 bg-black/5 rounded-xl border border-[var(--border)]">
             <label class="block text-[10px] font-black uppercase tracking-tighter mb-3 opacity-50">Custom Palette Upload</label>
             <div class="space-y-3">
-                <button onclick="document.getElementById('palette-upload').click()" class="w-full font-upload-btn py-3 bg-white hover:bg-slate-50 transition-colors">
+                <button onclick="document.getElementById('palette-upload').click()" class="w-full font-upload-btn py-3 bg-white/50 hover:bg-white transition-colors">
                     Upload .txt Palette File
                 </button>
-                <textarea id="palette-input" class="w-full h-24 p-2 text-[10px] font-mono border border-slate-200 rounded-lg outline-none focus:border-primary resize-none" placeholder="Paste format:&#10;--text: #191102;&#10;--background: #fbf9f6;&#10;--primary: #eea629;&#10;..."></textarea>
+                <textarea id="palette-input" class="w-full h-24 p-2 text-[10px] font-mono border border-[var(--border)] bg-white/30 rounded-lg outline-none focus:border-primary resize-none" placeholder="Paste format:&#10;--text: #191102;&#10;--background: #fbf9f6;&#10;--primary: #eea629;&#10;..."></textarea>
                 <button onclick="applyManualPalette()" class="w-full py-2 bg-slate-900 text-white text-[10px] font-bold uppercase rounded-lg hover:bg-black transition-colors">Apply Manual Palette</button>
             </div>
             <input type="file" id="palette-upload" class="hidden" accept=".txt,.css" onchange="handlePaletteUpload(this)">
@@ -197,17 +226,17 @@
 
         <div class="mb-6">
             <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Main Font Library</label>
-            <select id="google-font-picker" onchange="changeGoogleFont(this.value)" class="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary bg-white">
+            <select id="google-font-picker" onchange="changeGoogleFont(this.value)" class="w-full p-2 border border-[var(--border)] rounded-lg text-sm outline-none focus:border-primary bg-white/50">
             </select>
         </div>
 
         <div class="mb-6">
             <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Monospace Font Library</label>
-            <select id="google-mono-picker" onchange="changeMonoFont(this.value)" class="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary bg-white font-mono">
+            <select id="google-mono-picker" onchange="changeMonoFont(this.value)" class="w-full p-2 border border-[var(--border)] rounded-lg text-sm outline-none focus:border-primary bg-white/50 font-mono">
             </select>
         </div>
 
-        <div class="space-y-6 pt-4 border-t border-slate-100">
+        <div class="space-y-6 pt-4 border-t border-[var(--border)]">
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Custom Main Font Files</label>
                 <div class="grid grid-cols-2 gap-2">
@@ -236,10 +265,10 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex overflow-hidden">
-        <div id="editor-pane" class="flex-1 flex flex-col border-r border-[#e5e1da] transition-pane bg-white/40">
-            <div class="px-6 py-3 border-b border-[#f0eee9] text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex justify-between items-center">
+        <div id="editor-pane" class="flex-1 flex flex-col transition-pane">
+            <div class="pane-header px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex justify-between items-center">
                 <span class="flex items-center gap-2">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)]"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)] transition-colors"></span>
                     Source Editor
                 </span>
                 <span id="char-count">0 characters</span>
@@ -248,7 +277,7 @@
         </div>
 
         <div id="preview-pane" class="flex-1 flex flex-col transition-pane">
-            <div class="px-6 py-3 border-b border-white/50 bg-[#fdfcfb] text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+            <div class="pane-header px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
                 Live Preview
             </div>
             <div id="preview-container" class="flex-1 overflow-y-auto p-10 custom-scroll">
@@ -263,324 +292,293 @@
     </div>
 
     <script>
-        const markdownInput = document.getElementById('markdown-input');
-        const previewContent = document.getElementById('preview-content');
-        const fileUpload = document.getElementById('file-upload');
-        const charCount = document.getElementById('char-count');
-        const editorPane = document.getElementById('editor-pane');
-        const previewPane = document.getElementById('preview-pane');
-        
-        const themes = ['sunny', 'electric', 'natural', 'custom'];
-        let currentThemeIndex = 0;
-
-        const googleFonts = [
-            "Inter", "Roboto", "Open Sans", "Montserrat", "Lato", "Poppins", "Playfair Display", 
-            "Merriweather", "Lora", "PT Serif", "Fira Sans", "Ubuntu", "Mukta", "Nunito", 
-            "Raleway", "Quicksand", "Oswald", "Bebas Neue", "Josefin Sans", "Kanit", "Work Sans", 
-            "DM Sans", "Source Sans Pro", "Crimson Text", "Arvo", "Cormorant Garamond", 
-            "Libre Baskerville", "Bitter", "Pacifico", "Caveat", "Dancing Script", "Spectral"
-        ];
-
-        const googleMonoFonts = [
-            "Fira Code", "Source Code Pro", "Roboto Mono", "Ubuntu Mono", "Courier Prime", 
-            "JetBrains Mono", "Inconsolata", "Space Mono", "IBM Plex Mono", "Share Tech Mono"
-        ];
-
-        marked.setOptions({
-            highlight: function(code, lang) {
-                if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
-                return hljs.highlightAuto(code).value;
-            },
-            breaks: true, gfm: true
-        });
-
-        function updatePreview() {
-            const content = markdownInput.value;
-            previewContent.innerHTML = marked.parse(content);
-            charCount.textContent = `${content.length} characters`;
-            document.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
-            localStorage.setItem('bmor_md_content', content);
-        }
-
-        // --- Custom Palette Logic ---
-        function handlePaletteUpload(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const text = e.target.result;
-                document.getElementById('palette-input').value = text;
-                processPalette(text);
-            };
-            reader.readAsText(file);
-        }
-
-        function applyManualPalette() {
-            const text = document.getElementById('palette-input').value;
-            processPalette(text);
-        }
-
-        function processPalette(text) {
-            const lines = text.split('\n');
-            const palette = {};
-            const keys = ['text', 'background', 'primary', 'secondary', 'accent'];
-            
-            lines.forEach(line => {
-                const match = line.match(/--(text|background|primary|secondary|accent):\s*(#[0-9a-fA-F]{3,6});/);
-                if (match) {
-                    palette[match[1]] = match[2];
-                }
-            });
-
-            if (Object.keys(palette).length < 5) {
-                showToast("Error: Missing some colors in palette!");
-                return;
-            }
-
-            localStorage.setItem('bmor_custom_palette', JSON.stringify(palette));
-            applyCustomThemeVars(palette);
-            applyTheme('custom');
-            currentThemeIndex = 3; // Jump to custom slot
-            showToast("Custom Palette Applied!");
-        }
-
-        function applyCustomThemeVars(palette) {
-            const styleTag = document.getElementById('custom-theme-vars');
-            let css = `body.theme-custom {\n`;
-            for (const [key, val] of Object.entries(palette)) {
-                css += `  --${key}: ${val};\n`;
-            }
-            css += `}`;
-            styleTag.innerHTML = css;
-        }
-
-        // --- Typography & Files ---
-        function toggleTypography() {
-            document.getElementById('typography-panel').classList.toggle('visible');
-        }
-
-        function populatePickers() {
-            const picker = document.getElementById('google-font-picker');
-            googleFonts.sort().forEach(font => {
-                const opt = document.createElement('option');
-                opt.value = font; opt.textContent = font;
-                picker.appendChild(opt);
-            });
-            const monoPicker = document.getElementById('google-mono-picker');
-            googleMonoFonts.sort().forEach(font => {
-                const opt = document.createElement('option');
-                opt.value = font; opt.textContent = font;
-                monoPicker.appendChild(opt);
-            });
-        }
-
-        function changeGoogleFont(fontName) {
-            document.body.style.setProperty('--preview-font', `'${fontName}', sans-serif`);
-            loadGoogleFontLink('main', fontName);
-            localStorage.setItem('bmor_md_font', fontName);
-            updateFontButtonsStatus();
-        }
-
-        function changeMonoFont(fontName) {
-            document.body.style.setProperty('--code-font', `'${fontName}', monospace`);
-            loadGoogleFontLink('mono', fontName);
-            localStorage.setItem('bmor_md_mono_font', fontName);
-            updateFontButtonsStatus();
-        }
-
-        function loadGoogleFontLink(type, fontName) {
-            const linkId = `google-font-link-${type}`;
-            let link = document.getElementById(linkId);
-            if (!link) {
-                link = document.createElement('link');
-                link.id = linkId; link.rel = 'stylesheet';
-                document.head.appendChild(link);
-            }
-            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
-        }
-
-        function handleFontUpload(input, style, weight, target) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64 = e.target.result;
-                const fontKey = target === 'mono' ? 'font_mono' : `font_${style}_${weight}`;
-                let customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
-                customData[fontKey] = base64;
-                localStorage.setItem('bmor_custom_fonts', JSON.stringify(customData));
-                applyCustomFonts();
-                showToast(`Loaded ${target === 'mono' ? 'Mono' : style + ' ' + weight}`);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function applyCustomFonts() {
-            const customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
-            const styleTag = document.getElementById('dynamic-fonts');
-            let css = '';
-            if (Object.keys(customData).length > 0) {
-                for (const [key, data] of Object.entries(customData)) {
-                    if (key === 'font_mono') {
-                        css += `@font-face { font-family: 'CustomMonoFont'; src: url('${data}'); }\n`;
-                        document.body.style.setProperty('--code-font', "'CustomMonoFont', monospace");
-                    } else {
-                        const [_, style, weight] = key.split('_');
-                        css += `@font-face { font-family: 'CustomPreviewFont'; src: url('${data}'); font-weight: ${weight}; font-style: ${style}; }\n`;
-                    }
-                }
-                if (customData['font_normal_400'] || customData['font_normal_700'] || customData['font_italic_400'] || customData['font_italic_700']) {
-                    document.body.style.setProperty('--preview-font', "'CustomPreviewFont', sans-serif");
-                }
-                styleTag.innerHTML = css;
-            }
-            updateFontButtonsStatus();
-        }
-
-        function updateFontButtonsStatus() {
-            const customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
-            document.getElementById('btn-regular').classList.toggle('loaded', !!customData['font_normal_400']);
-            document.getElementById('btn-bold').classList.toggle('loaded', !!customData['font_normal_700']);
-            document.getElementById('btn-italic').classList.toggle('loaded', !!customData['font_italic_400']);
-            document.getElementById('btn-bolditalic').classList.toggle('loaded', !!customData['font_italic_700']);
-            document.getElementById('btn-mono').classList.toggle('loaded', !!customData['font_mono']);
-        }
-
-        function resetFonts() {
-            localStorage.clear();
-            location.reload();
-        }
-
-        // --- Core Studio Logic ---
-        function applyTheme(themeName) {
-            themes.forEach(t => document.body.classList.remove(`theme-${t}`));
-            if (themeName !== 'sunny') document.body.classList.add(`theme-${themeName}`);
-            
-            document.getElementById('theme-label').textContent = themeName.charAt(0).toUpperCase() + themeName.slice(1);
-            document.getElementById('icon-sunny').classList.toggle('hidden', themeName !== 'sunny');
-            document.getElementById('icon-electric').classList.toggle('hidden', themeName !== 'electric');
-            document.getElementById('icon-natural').classList.toggle('hidden', themeName !== 'natural');
-            document.getElementById('icon-custom').classList.toggle('hidden', themeName !== 'custom');
-            
-            localStorage.setItem('bmor_md_theme', themeName);
-        }
-
-        function cycleTheme() {
-            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
-            const theme = themes[currentThemeIndex];
-            
-            if (theme === 'custom' && !localStorage.getItem('bmor_custom_palette')) {
-                // Skip custom if none exists
-                currentThemeIndex = 0;
-            }
-            
-            applyTheme(themes[currentThemeIndex]);
-            showToast(`Theme: ${themes[currentThemeIndex].toUpperCase()}`);
-        }
-
-        function downloadFile() {
-            const content = markdownInput.value;
-            if (!content) return showToast("Nothing to export!");
-            const blob = new Blob([content], { type: 'text/markdown' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = 'bmor-document.md'; a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function triggerUpload() { fileUpload.click(); }
-        fileUpload.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                markdownInput.value = e.target.result;
-                updatePreview();
-                showToast(`Loaded "${file.name}"`);
-            };
-            reader.readAsText(file);
-        });
-
-        function toggleZen() {
-            const zenBtn = document.getElementById('zenBtn');
+        // Use window.onload to ensure elements are available
+        window.onload = () => {
+            const markdownInput = document.getElementById('markdown-input');
+            const previewContent = document.getElementById('preview-content');
+            const fileUpload = document.getElementById('file-upload');
+            const charCount = document.getElementById('char-count');
             const editorPane = document.getElementById('editor-pane');
             const previewPane = document.getElementById('preview-pane');
             
-            previewPane.classList.toggle('hidden-pane');
-            
-            // Adjust the width of the textarea to be responsive and comfortable
-            // Using a combination of w-full and max-widths for screen-size adjustment
-            markdownInput.classList.toggle('max-w-7xl');
-            markdownInput.classList.toggle('mx-auto');
-            markdownInput.classList.toggle('w-full');
-            
-            const isZen = previewPane.classList.contains('hidden-pane');
-            zenBtn.style.backgroundColor = isZen ? 'var(--primary)' : '';
-            zenBtn.style.color = isZen ? 'white' : '';
-            showToast(isZen ? "Zen Mode: Spacious Focus" : "Split View Restored");
-        }
+            const themes = ['sunny', 'electric', 'natural', 'custom'];
+            let currentThemeIndex = 0;
 
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-text').textContent = msg;
-            toast.style.background = 'var(--text)';
-            toast.style.color = 'var(--background)';
-            toast.classList.add('visible');
-            setTimeout(() => toast.classList.remove('visible'), 3000);
-        }
+            const googleFonts = [
+                "Inter", "Roboto", "Open Sans", "Montserrat", "Lato", "Poppins", "Playfair Display", 
+                "Merriweather", "Lora", "PT Serif", "Fira Sans", "Ubuntu", "Mukta", "Nunito", 
+                "Raleway", "Quicksand", "Oswald", "Bebas Neue", "Josefin Sans", "Kanit", "Work Sans", 
+                "DM Sans", "Source Sans Pro", "Crimson Text", "Arvo", "Cormorant Garamond", 
+                "Libre Baskerville", "Bitter", "Pacifico", "Caveat", "Dancing Script", "Spectral"
+            ];
 
-        window.onload = () => {
-            populatePickers();
-            
-            const savedTheme = localStorage.getItem('bmor_md_theme') || 'sunny';
-            currentThemeIndex = themes.indexOf(savedTheme);
-            if (currentThemeIndex === -1) currentThemeIndex = 0;
+            const googleMonoFonts = [
+                "Fira Code", "Source Code Pro", "Roboto Mono", "Ubuntu Mono", "Courier Prime", 
+                "JetBrains Mono", "Inconsolata", "Space Mono", "IBM Plex Mono", "Share Tech Mono"
+            ];
 
-            const savedPalette = localStorage.getItem('bmor_custom_palette');
-            if (savedPalette) {
-                applyCustomThemeVars(JSON.parse(savedPalette));
+            // Initialize Marked
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                headerIds: false,
+                mangle: false
+            });
+
+            function updatePreview() {
+                const content = markdownInput.value;
+                try {
+                    previewContent.innerHTML = marked.parse(content);
+                    charCount.textContent = `${content.length} characters`;
+                    document.querySelectorAll('pre code').forEach(block => {
+                        if (typeof hljs !== 'undefined') hljs.highlightElement(block);
+                    });
+                    localStorage.setItem('bmor_md_content', content);
+                } catch (e) {
+                    console.error("Marked error:", e);
+                }
             }
 
-            applyTheme(savedTheme);
+            // Expose needed functions to global scope for HTML onclick attributes
+            window.toggleTypography = () => document.getElementById('typography-panel').classList.toggle('visible');
+            
+            window.handlePaletteUpload = (input) => {
+                const file = input.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    document.getElementById('palette-input').value = text;
+                    processPalette(text);
+                };
+                reader.readAsText(file);
+            };
 
+            window.applyManualPalette = () => {
+                const text = document.getElementById('palette-input').value;
+                processPalette(text);
+            };
+
+            function processPalette(text) {
+                const lines = text.split('\n');
+                const palette = {};
+                lines.forEach(line => {
+                    const match = line.match(/--(text|background|primary|secondary|accent):\s*(#[0-9a-fA-F]{3,6});/);
+                    if (match) palette[match[1]] = match[2];
+                });
+
+                if (Object.keys(palette).length < 5) {
+                    showToast("Error: Missing some colors in palette!");
+                    return;
+                }
+
+                localStorage.setItem('bmor_custom_palette', JSON.stringify(palette));
+                applyCustomThemeVars(palette);
+                applyTheme('custom');
+                currentThemeIndex = 3;
+                showToast("Custom Palette Applied!");
+            }
+
+            function applyCustomThemeVars(palette) {
+                const styleTag = document.getElementById('custom-theme-vars');
+                let css = `body.theme-custom {\n`;
+                for (const [key, val] of Object.entries(palette)) {
+                    css += `  --${key}: ${val};\n`;
+                }
+                // Enforce palette on generic elements for "everywhere" coverage
+                css += `  --border: ${palette.secondary || palette.primary}44;\n`;
+                css += `}\n`;
+                css += `body.theme-custom header, body.theme-custom #editor-pane, body.theme-custom .pane-header { border-color: var(--border) !important; }\n`;
+                styleTag.innerHTML = css;
+            }
+
+            window.changeGoogleFont = (fontName) => {
+                document.body.style.setProperty('--preview-font', `'${fontName}', sans-serif`);
+                loadGoogleFontLink('main', fontName);
+                localStorage.setItem('bmor_md_font', fontName);
+                updateFontButtonsStatus();
+            };
+
+            window.changeMonoFont = (fontName) => {
+                document.body.style.setProperty('--code-font', `'${fontName}', monospace`);
+                loadGoogleFontLink('mono', fontName);
+                localStorage.setItem('bmor_md_mono_font', fontName);
+                updateFontButtonsStatus();
+            };
+
+            function loadGoogleFontLink(type, fontName) {
+                const linkId = `google-font-link-${type}`;
+                let link = document.getElementById(linkId);
+                if (!link) {
+                    link = document.createElement('link');
+                    link.id = linkId; link.rel = 'stylesheet';
+                    document.head.appendChild(link);
+                }
+                link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
+            }
+
+            window.handleFontUpload = (input, style, weight, target) => {
+                const file = input.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    const fontKey = target === 'mono' ? 'font_mono' : `font_${style}_${weight}`;
+                    let customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
+                    customData[fontKey] = base64;
+                    localStorage.setItem('bmor_custom_fonts', JSON.stringify(customData));
+                    applyCustomFonts();
+                    showToast(`Loaded ${target === 'mono' ? 'Mono' : style + ' ' + weight}`);
+                };
+                reader.readAsDataURL(file);
+            };
+
+            function applyCustomFonts() {
+                const customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
+                const styleTag = document.getElementById('dynamic-fonts');
+                let css = '';
+                if (Object.keys(customData).length > 0) {
+                    for (const [key, data] of Object.entries(customData)) {
+                        if (key === 'font_mono') {
+                            css += `@font-face { font-family: 'CustomMonoFont'; src: url('${data}'); }\n`;
+                            document.body.style.setProperty('--code-font', "'CustomMonoFont', monospace");
+                        } else {
+                            const [_, style, weight] = key.split('_');
+                            css += `@font-face { font-family: 'CustomPreviewFont'; src: url('${data}'); font-weight: ${weight}; font-style: ${style}; }\n`;
+                        }
+                    }
+                    if (customData['font_normal_400'] || customData['font_normal_700']) {
+                        document.body.style.setProperty('--preview-font', "'CustomPreviewFont', sans-serif");
+                    }
+                    styleTag.innerHTML = css;
+                }
+                updateFontButtonsStatus();
+            }
+
+            function updateFontButtonsStatus() {
+                const customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
+                const btnIds = {'font_normal_400': 'btn-regular', 'font_normal_700': 'btn-bold', 'font_italic_400': 'btn-italic', 'font_italic_700': 'btn-bolditalic', 'font_mono': 'btn-mono'};
+                Object.entries(btnIds).forEach(([key, id]) => {
+                    const btn = document.getElementById(id);
+                    if (btn) btn.classList.toggle('loaded', !!customData[key]);
+                });
+            }
+
+            window.resetFonts = () => { localStorage.clear(); location.reload(); };
+
+            window.applyTheme = (themeName) => {
+                themes.forEach(t => document.body.classList.remove(`theme-${t}`));
+                if (themeName !== 'sunny') document.body.classList.add(`theme-${themeName}`);
+                
+                document.getElementById('theme-label').textContent = themeName.charAt(0).toUpperCase() + themeName.slice(1);
+                document.getElementById('icon-sunny').classList.toggle('hidden', themeName !== 'sunny');
+                document.getElementById('icon-electric').classList.toggle('hidden', themeName !== 'electric');
+                document.getElementById('icon-natural').classList.toggle('hidden', themeName !== 'natural');
+                document.getElementById('icon-custom').classList.toggle('hidden', themeName !== 'custom');
+                
+                localStorage.setItem('bmor_md_theme', themeName);
+            };
+
+            window.cycleTheme = () => {
+                currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+                const theme = themes[currentThemeIndex];
+                if (theme === 'custom' && !localStorage.getItem('bmor_custom_palette')) {
+                    currentThemeIndex = 0;
+                }
+                applyTheme(themes[currentThemeIndex]);
+                showToast(`Theme: ${themes[currentThemeIndex].toUpperCase()}`);
+            };
+
+            window.downloadFile = () => {
+                const content = markdownInput.value;
+                if (!content) return showToast("Nothing to export!");
+                const blob = new Blob([content], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = 'bmor-document.md'; a.click();
+                URL.revokeObjectURL(url);
+            };
+
+            window.triggerUpload = () => fileUpload.click();
+            fileUpload.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    markdownInput.value = e.target.result;
+                    updatePreview();
+                    showToast(`Loaded "${file.name}"`);
+                };
+                reader.readAsText(file);
+            });
+
+            window.toggleZen = () => {
+                const zenBtn = document.getElementById('zenBtn');
+                previewPane.classList.toggle('hidden-pane');
+                markdownInput.classList.toggle('max-w-7xl');
+                markdownInput.classList.toggle('mx-auto');
+                markdownInput.classList.toggle('w-full');
+                const isZen = previewPane.classList.contains('hidden-pane');
+                zenBtn.style.backgroundColor = isZen ? 'var(--primary)' : '';
+                zenBtn.style.color = isZen ? 'white' : '';
+                showToast(isZen ? "Zen Mode: Spacious Focus" : "Split View Restored");
+            };
+
+            function showToast(msg) {
+                const toast = document.getElementById('toast');
+                document.getElementById('toast-text').textContent = msg;
+                toast.style.background = 'var(--text)';
+                toast.style.color = 'var(--background)';
+                toast.classList.add('visible');
+                setTimeout(() => toast.classList.remove('visible'), 3000);
+            }
+
+            // Initialization
+            populatePickers();
+            const savedTheme = localStorage.getItem('bmor_md_theme') || 'sunny';
+            currentThemeIndex = themes.indexOf(savedTheme);
+            const savedPalette = localStorage.getItem('bmor_custom_palette');
+            if (savedPalette) applyCustomThemeVars(JSON.parse(savedPalette));
+            applyTheme(savedTheme);
             const savedFont = localStorage.getItem('bmor_md_font') || 'Inter';
             document.getElementById('google-font-picker').value = savedFont;
             changeGoogleFont(savedFont);
-
             const savedMono = localStorage.getItem('bmor_md_mono_font') || 'Fira Code';
             document.getElementById('google-mono-picker').value = savedMono;
             changeMonoFont(savedMono);
-
             applyCustomFonts();
 
-            const saved = localStorage.getItem('bmor_md_content');
-            markdownInput.value = saved || `# Welcome to BMOR 🎨
-
-Your space for high-end typography and custom color.
-
-### Custom Palettes
-Upload a text file or paste a palette in the Settings panel. Format:
-\`\`\`css
---text: #191102;
---background: #fbf9f6;
---primary: #eea629;
---secondary: #daf584;
---accent: #98f14f;
-\`\`\`
-
-> "Design is a conversation between clarity and aesthetics."`;
+            const savedContent = localStorage.getItem('bmor_md_content');
+            markdownInput.value = savedContent || `# Welcome to BMOR 🎨\n\nYour space for high-end typography and custom color.`;
             updatePreview();
-        };
 
-        markdownInput.addEventListener('keydown', function(e) {
-            if (e.key == 'Tab') {
-                e.preventDefault();
-                var start = this.selectionStart;
-                var end = this.selectionEnd;
-                this.value = this.value.substring(0, start) + "  " + this.value.substring(end);
-                this.selectionStart = this.selectionEnd = start + 2;
+            markdownInput.addEventListener('input', updatePreview);
+
+            markdownInput.addEventListener('keydown', function(e) {
+                if (e.key == 'Tab') {
+                    e.preventDefault();
+                    var start = this.selectionStart;
+                    var end = this.selectionEnd;
+                    this.value = this.value.substring(0, start) + "  " + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 2;
+                }
+            });
+
+            function populatePickers() {
+                const picker = document.getElementById('google-font-picker');
+                googleFonts.sort().forEach(font => {
+                    const opt = document.createElement('option');
+                    opt.value = font; opt.textContent = font;
+                    picker.appendChild(opt);
+                });
+                const monoPicker = document.getElementById('google-mono-picker');
+                googleMonoFonts.sort().forEach(font => {
+                    const opt = document.createElement('option');
+                    opt.value = font; opt.textContent = font;
+                    monoPicker.appendChild(opt);
+                });
             }
-        });
+        };
     </script>
 </body>
 </html>
