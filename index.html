@@ -114,8 +114,10 @@
         
         #preview-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
         #preview-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
-        
-        /* Task List Support */
+        #preview-content ul ul, #preview-content ol ol, #preview-content ul ol, #preview-content ol ul { margin-bottom: 0; }
+        #preview-content li { margin-bottom: 0.25rem; }
+
+        /* Task List Cleanup */
         .task-list-item { list-style-type: none !important; margin-left: -1rem !important; display: flex !important; align-items: flex-start !important; gap: 0.5rem; }
         .task-list-item input[type="checkbox"] { margin-top: 0.4rem; accent-color: var(--primary); cursor: default; }
 
@@ -345,12 +347,12 @@
                 text = text.replace(/\\([\+\=\-\*])/g, '$1');
                 text = text.replace(/\u00a0/g, ' ');
 
-                // Block Math $$ ... $$
+                // Block Math
                 text = text.replace(/\$\$([\s\S]+?)\$\$/g, (match, p1) => {
                     try { return `<div class="katex-display">${katex.renderToString(p1.trim(), { displayMode: true, throwOnError: false })}</div>`; }
                     catch (e) { return match; }
                 });
-                // Inline Math $ ... $
+                // Inline Math
                 text = text.replace(/\$([^\$\n]+?)\$/g, (match, p1) => {
                     try { return katex.renderToString(p1.trim(), { displayMode: false, throwOnError: false }); }
                     catch (e) { return match; }
@@ -363,11 +365,13 @@
                 const defRegex = /^\\?\[\^([^\]]+)\]:\s*([\s\S]+?)(?=\n\\?\[\^|\n\n|\n$|$)/gm;
                 let notes = [];
                 
+                // Extract definitions
                 text = text.replace(defRegex, (m, id, content) => { 
                     notes.push({ id, content: content.trim() }); 
                     return ""; 
                 });
 
+                // Replace references
                 text = text.replace(fnRegex, (m, id) => {
                     return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-${id}">${id}</a></sup>`;
                 });
@@ -563,8 +567,10 @@
                 const isZen = pp.classList.toggle('hidden-pane');
                 if (op) op.classList.add('hidden-pane');
                 
-                mi.classList.toggle('max-w-7xl', isZen);
-                mi.classList.toggle('mx-auto', isZen);
+                // Expanding to corners by removing max-width and margin auto
+                mi.classList.toggle('max-w-7xl', false);
+                mi.classList.toggle('mx-auto', false);
+                mi.classList.toggle('w-full', true);
                 
                 zb.style.backgroundColor = isZen ? 'var(--primary)' : '';
                 zb.style.color = isZen ? 'white' : '';
