@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
     <!-- Math Support -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
@@ -107,14 +108,18 @@
         #preview-content h1 { font-size: 2.5rem; font-weight: 800; border-bottom: 4px solid var(--secondary); padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
         #preview-content h2 { font-size: 1.75rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; color: var(--primary); }
         #preview-content h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
-        #preview-content h4 { font-size: 1.2rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; }
-        #preview-content h5 { font-size: 1.1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; }
-        #preview-content h6 { font-size: 1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; opacity: 0.8; }
+        #preview-content h4 { font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; color: var(--text); }
+        #preview-content h5 { font-size: 1.1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--text); opacity: 0.9; }
+        #preview-content h6 { font-size: 1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--text); opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; }
         
         #preview-content ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
         #preview-content ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; }
         #preview-content ul ul, #preview-content ol ol, #preview-content ul ol, #preview-content ol ul { margin-bottom: 0; }
         #preview-content li { margin-bottom: 0.25rem; }
+
+        /* Task List Cleanup */
+        .task-list-item { list-style-type: none !important; margin-left: -1rem !important; display: flex !important; align-items: flex-start !important; gap: 0.5rem; }
+        .task-list-item input[type="checkbox"] { margin-top: 0.4rem; accent-color: var(--primary); cursor: default; }
 
         #preview-content blockquote {
             border-left: 4px solid var(--primary);
@@ -123,49 +128,29 @@
             margin: 1.5rem 0;
             border-radius: 0 8px 8px 0;
             font-style: italic;
-            opacity: 0.9;
         }
 
-        #preview-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-            border: 1px solid var(--border);
-        }
-        #preview-content th, #preview-content td {
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            text-align: left;
-        }
+        #preview-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; border: 1px solid var(--border); }
+        #preview-content th, #preview-content td { padding: 0.75rem; border: 1px solid var(--border); text-align: left; }
         #preview-content th { background-color: var(--secondary); font-weight: 700; }
 
         #preview-content pre { 
-            background: #fff; padding: 1.25rem; border-radius: 12px; 
-            margin: 1.5rem 0; overflow-x: auto; border: 1px solid var(--border);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            background: #fff; padding: 1.25rem; border-radius: 12px; margin: 1.5rem 0; overflow-x: auto; 
+            border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
             font-family: var(--code-font) !important;
         }
         #preview-content code { 
-            font-family: var(--code-font) !important;
-            background-color: var(--secondary);
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
-            font-size: 0.9em;
+            font-family: var(--code-font) !important; background-color: var(--secondary);
+            padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em;
         }
         #preview-content pre code { background-color: transparent; padding: 0; }
 
         #preview-content a { color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
         #preview-content hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
 
-        /* Task Lists */
-        #preview-content input[type="checkbox"] {
-            margin-right: 0.5rem;
-            accent-color: var(--primary);
-        }
-
         /* Footnotes */
-        .footnotes { font-size: 0.9em; opacity: 0.8; margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 1rem; }
-        .footnote-ref { color: var(--primary); text-decoration: none; font-weight: bold; }
+        .footnotes { font-size: 0.85em; opacity: 0.8; margin-top: 3rem; border-top: 2px solid var(--secondary); padding-top: 1.5rem; }
+        .footnote-ref a { text-decoration: none !important; font-weight: bold; background: var(--secondary); padding: 0 4px; border-radius: 4px; font-size: 0.8em; margin-left: 2px; color: var(--primary); }
 
         .custom-scroll::-webkit-scrollbar { width: 8px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -174,50 +159,21 @@
         .transition-pane { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .hidden-pane { flex: 0 0 0% !important; opacity: 0; pointer-events: none; overflow: hidden; }
         
-        .btn-action {
-            background-color: var(--background);
-            border: 1px solid var(--border);
-            color: var(--text);
-            transition: all 0.2s;
-        }
-        .btn-action:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-1px);
-        }
-
+        .btn-action { background-color: var(--background); border: 1px solid var(--border); color: var(--text); transition: all 0.2s; }
+        .btn-action:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
         .logo-box { background-color: var(--primary); transition: all 0.3s ease; }
 
         #typography-panel {
-            position: fixed;
-            top: 70px;
-            right: 2rem;
-            width: 320px;
-            max-height: calc(100vh - 100px);
-            overflow-y: auto;
-            background: var(--background);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-            z-index: 50;
-            display: none;
-            color: var(--text);
+            position: fixed; top: 70px; right: 2rem; width: 320px; max-height: calc(100vh - 100px);
+            overflow-y: auto; background: var(--background); border: 1px solid var(--border);
+            border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); z-index: 50;
+            display: none; color: var(--text);
         }
         #typography-panel.visible { display: block; animation: slideIn 0.2s ease-out; }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .font-upload-btn {
-            font-size: 0.7rem;
-            padding: 6px 8px;
-            border: 1px dashed var(--border);
-            border-radius: 6px;
-            cursor: pointer;
-            text-align: center;
-        }
+        .font-upload-btn { font-size: 0.7rem; padding: 6px 8px; border: 1px dashed var(--border); border-radius: 6px; cursor: pointer; text-align: center; }
         .font-upload-btn:hover { border-color: var(--primary); background: var(--secondary); }
         .font-upload-btn.loaded { background: var(--secondary); border-style: solid; border-color: var(--primary); }
 
@@ -235,9 +191,7 @@
             <div class="w-10 h-10 logo-box rounded-xl flex items-center justify-center shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="m8 7 4-4 4 4"/><path d="m8 17 4 4 4-4"/></svg>
             </div>
-            <div>
-                <h1 class="text-xl font-extrabold tracking-tight" style="color: var(--text)">B<span style="color: var(--primary)">MOR</span></h1>
-            </div>
+            <h1 class="text-xl font-extrabold tracking-tight" style="color: var(--text)">B<span style="color: var(--primary)">MOR</span></h1>
         </div>
         
         <div class="flex items-center gap-3">
@@ -279,14 +233,13 @@
     <div id="typography-panel" class="p-6 custom-scroll">
         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Studio Settings</h3>
         
-        <!-- Palette Section -->
         <div class="mb-8 p-4 bg-black/5 rounded-xl border border-[var(--border)]">
             <label class="block text-[10px] font-black uppercase tracking-tighter mb-3 opacity-50">Custom Palette Upload</label>
             <div class="space-y-3">
                 <button onclick="document.getElementById('palette-upload').click()" class="w-full font-upload-btn py-3 bg-white/50 hover:bg-white transition-colors">
                     Upload .txt Palette File
                 </button>
-                <textarea id="palette-input" class="w-full h-24 p-2 text-[10px] font-mono border border-[var(--border)] bg-white/30 rounded-lg outline-none focus:border-primary resize-none" placeholder="Paste format:&#10;--text: #191102;&#10;--background: #fbf9f6;&#10;--primary: #eea629;&#10;..."></textarea>
+                <textarea id="palette-input" class="w-full h-24 p-2 text-[10px] font-mono border border-[var(--border)] bg-white/30 rounded-lg outline-none focus:border-primary resize-none" placeholder="Paste format:&#10;--text: #191102;&#10;--background: #fbf9f6;..."></textarea>
                 <button onclick="applyManualPalette()" class="w-full py-2 bg-slate-900 text-white text-[10px] font-bold uppercase rounded-lg hover:bg-black transition-colors">Apply Manual Palette</button>
             </div>
             <input type="file" id="palette-upload" class="hidden" accept=".txt,.css" onchange="handlePaletteUpload(this)">
@@ -323,7 +276,6 @@
             <button onclick="resetFonts()" class="w-full py-2 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100">Factory Reset Studio</button>
         </div>
 
-        <!-- Hidden Inputs -->
         <input type="file" id="upload-regular" class="hidden" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(this, 'normal', '400', 'main')">
         <input type="file" id="upload-bold" class="hidden" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(this, 'normal', '700', 'main')">
         <input type="file" id="upload-italic" class="hidden" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(this, 'italic', '400', 'main')">
@@ -333,14 +285,9 @@
 
     <!-- Main Content -->
     <main class="flex-1 flex overflow-hidden">
-        <!-- Outline Pane -->
         <div id="outline-pane" class="flex flex-col hidden-pane transition-pane overflow-hidden">
-            <div class="pane-header px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                Outline
-            </div>
-            <div id="outline-content" class="flex-1 overflow-y-auto p-4 custom-scroll text-sm space-y-1">
-                <!-- Content generated via JS -->
-            </div>
+            <div class="pane-header px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Outline</div>
+            <div id="outline-content" class="flex-1 overflow-y-auto p-4 custom-scroll text-sm space-y-1"></div>
         </div>
 
         <div id="editor-pane" class="flex-1 flex flex-col transition-pane">
@@ -355,9 +302,7 @@
         </div>
 
         <div id="preview-pane" class="flex-1 flex flex-col transition-pane">
-            <div class="pane-header px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
-                Live Preview
-            </div>
+            <div class="pane-header px-6 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Live Preview</div>
             <div id="preview-container" class="flex-1 overflow-y-auto p-10 custom-scroll">
                 <div id="preview-content" class="max-w-3xl mx-auto"></div>
             </div>
@@ -373,39 +318,24 @@
         window.onload = () => {
             const markdownInput = document.getElementById('markdown-input');
             const previewContent = document.getElementById('preview-content');
-            const fileUpload = document.getElementById('file-upload');
             const charCount = document.getElementById('char-count');
-            const editorPane = document.getElementById('editor-pane');
-            const previewPane = document.getElementById('preview-pane');
-            const outlinePane = document.getElementById('outline-pane');
-            const outlineContent = document.getElementById('outline-content');
-            
+            const fileUpload = document.getElementById('file-upload');
             const themes = ['sunny', 'electric', 'natural', 'custom'];
             let currentThemeIndex = 0;
 
-            const googleFonts = ["Inter", "Roboto", "Open Sans", "Montserrat", "Lato", "Poppins", "Playfair Display", "Merriweather", "Lora", "PT Serif", "Fira Sans", "Ubuntu", "Mukta", "Nunito", "Raleway", "Quicksand", "Oswald", "Bebas Neue", "Josefin Sans", "Kanit", "Work Sans", "DM Sans", "Source Sans Pro", "Crimson Text", "Arvo", "Cormorant Garamond", "Libre Baskerville", "Bitter", "Pacifico", "Caveat", "Dancing Script", "Spectral"];
-            const googleMonoFonts = ["Fira Code", "Source Code Pro", "Roboto Mono", "Ubuntu Mono", "Courier Prime", "JetBrains Mono", "Inconsolata", "Space Mono", "IBM Plex Mono", "Share Tech Mono"];
+            marked.setOptions({ gfm: true, breaks: true });
 
-            // Initialize Marked
-            marked.setOptions({
-                breaks: true,
-                gfm: true,
-                headerIds: false,
-                mangle: false
-            });
-
-            // Math rendering handler
             function renderMath(text) {
-                // Normalize characters like non-breaking spaces
+                // Normalize and handle common copy-paste artifacts like \+ and \=
+                text = text.replace(/\\([\+\=\-\*])/g, '$1');
                 text = text.replace(/\u00a0/g, ' ');
-                
-                // Block Math $$ ... $$
+
+                // Block Math
                 text = text.replace(/\$\$([\s\S]+?)\$\$/g, (match, p1) => {
                     try { return `<div class="katex-display">${katex.renderToString(p1.trim(), { displayMode: true, throwOnError: false })}</div>`; }
                     catch (e) { return match; }
                 });
-                // Inline Math $ ... $
-                // Lookbehind/ahead logic to ensure we don't match currency but do match math
+                // Inline Math
                 text = text.replace(/\$([^\$\n]+?)\$/g, (match, p1) => {
                     try { return katex.renderToString(p1.trim(), { displayMode: false, throwOnError: false }); }
                     catch (e) { return match; }
@@ -413,78 +343,76 @@
                 return text;
             }
 
-            // Custom Footnote handler
             function renderFootnotes(text) {
-                const footnoteRegex = /\[\^([^\]]+)\]/g;
-                // Capture multi-line definitions until double newline or next definition
-                const definitionRegex = /^\[\^([^\]]+)\]:\s*([\s\S]+?)(?=\n\[\^|\n\n|\n$|$)/gm;
-                let footnotes = [];
+                const fnRegex = /\\?\[\^([^\]]+)\]/g;
+                const defRegex = /^\\?\[\^([^\]]+)\]:\s*([\s\S]+?)(?=\n\\?\[\^|\n\n|\n$|$)/gm;
+                let notes = [];
                 
                 // Extract definitions
-                text = text.replace(definitionRegex, (match, id, content) => {
-                    footnotes.push({ id, content: content.trim() });
-                    return "";
+                text = text.replace(defRegex, (m, id, content) => { 
+                    notes.push({ id, content: content.trim() }); 
+                    return ""; 
                 });
 
                 // Replace references
-                text = text.replace(footnoteRegex, (match, id) => {
+                text = text.replace(fnRegex, (m, id) => {
                     return `<sup class="footnote-ref"><a href="#fn-${id}" id="ref-${id}">${id}</a></sup>`;
                 });
 
-                if (footnotes.length > 0) {
-                    let fnHtml = '<div class="footnotes"><hr><ol>';
-                    footnotes.forEach(fn => {
-                        fnHtml += `<li id="fn-${fn.id}">${marked.parseInline(fn.content)} <a href="#ref-${fn.id}">↩</a></li>`;
+                if (notes.length > 0) {
+                    let html = '<div class="footnotes"><hr><ol>';
+                    notes.forEach(n => { 
+                        html += `<li id="fn-${n.id}">${marked.parseInline(n.content)} <a href="#ref-${n.id}">↩</a></li>`; 
                     });
-                    fnHtml += '</ol></div>';
-                    text += fnHtml;
+                    text += html + '</ol></div>';
                 }
                 return text;
             }
 
-            function updatePreview() {
-                let content = markdownInput.value || "";
-                // Normalize non-breaking spaces
-                content = content.replace(/\u00a0/g, ' ');
-                
+            function processTaskLists(html) {
+                // Expanded support for [x], [s], [?], etc.
+                return html.replace(/<li>\s*\[([xXsS\?\s])\]\s*/g, (m, char) => {
+                    const isChecked = ['x', 'X', 's', 'S'].includes(char) ? 'checked' : '';
+                    return `<li class="task-list-item"><input type="checkbox" disabled ${isChecked}> `;
+                });
+            }
+
+            window.updatePreview = () => {
+                let val = markdownInput.value || "";
+                val = val.replace(/\u00a0/g, ' '); 
                 try {
-                    // Pre-process Math and Footnotes
-                    let processed = renderMath(content);
+                    let processed = renderMath(val);
                     processed = renderFootnotes(processed);
+                    let html = marked.parse(processed);
+                    html = processTaskLists(html);
                     
-                    previewContent.innerHTML = marked.parse(processed);
-                    charCount.textContent = `${markdownInput.value.length} characters`;
-                    
+                    previewContent.innerHTML = html;
+                    charCount.textContent = `${val.length} characters`;
                     document.querySelectorAll('pre code').forEach(block => {
                         if (typeof hljs !== 'undefined') hljs.highlightElement(block);
                     });
-                    
-                    localStorage.setItem('bmor_md_content', markdownInput.value);
+                    localStorage.setItem('bmor_md_content', val);
                     updateOutline();
-                } catch (e) {
-                    console.error("Parser error:", e);
-                }
+                } catch (e) { console.error(e); }
             }
 
             function updateOutline() {
                 const lines = markdownInput.value.split('\n');
-                const headingRegex = /^(#{1,6})\s+(.+)$/;
                 let html = '';
                 lines.forEach(line => {
-                    const match = line.match(headingRegex);
+                    const match = line.match(/^(#{1,6})\s+(.+)$/);
                     if (match) {
                         const level = match[1].length;
                         const text = match[2].trim();
-                        const indent = (level - 1) * 12;
-                        html += `<div onclick="scrollToHeading('${text.replace(/'/g, "\\'")}')" class="cursor-pointer py-1.5 px-3 rounded-md transition-all truncate text-xs font-medium" style="margin-left: ${indent}px; opacity: ${1 - (level-1)*0.15}">${text}</div>`;
+                        html += `<div onclick="scrollToHeading('${text.replace(/'/g, "\\'")}')" class="cursor-pointer py-1.5 px-3 rounded-md transition-all truncate text-xs font-medium" style="margin-left: ${(level-1)*12}px; opacity: ${1-(level-1)*0.15}">${text}</div>`;
                     }
                 });
-                outlineContent.innerHTML = html || '<div class="text-[10px] opacity-40 px-2">No headings</div>';
+                document.getElementById('outline-content').innerHTML = html || '<div class="text-[10px] opacity-40 px-2">No headings</div>';
             }
 
             window.scrollToHeading = (text) => {
-                const headings = previewContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
-                for (let h of headings) {
+                const heads = previewContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                for (let h of heads) {
                     if (h.textContent.trim() === text) {
                         h.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         h.style.color = 'var(--primary)';
@@ -495,74 +423,73 @@
             };
 
             window.toggleOutline = () => {
-                const btn = document.getElementById('outlineBtn');
-                const isHidden = outlinePane.classList.contains('hidden-pane');
-                outlinePane.classList.toggle('hidden-pane');
-                btn.style.backgroundColor = isHidden ? 'var(--primary)' : '';
-                btn.style.color = isHidden ? 'white' : '';
+                const op = document.getElementById('outline-pane');
+                const b = document.getElementById('outlineBtn');
+                const hide = op.classList.toggle('hidden-pane');
+                b.style.backgroundColor = !hide ? 'var(--primary)' : '';
+                b.style.color = !hide ? 'white' : '';
             };
 
             window.toggleTypography = () => document.getElementById('typography-panel').classList.toggle('visible');
             
             window.handlePaletteUpload = (input) => {
-                const file = input.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('palette-input').value = e.target.result;
-                    processPalette(e.target.result);
-                };
-                reader.readAsText(file);
+                const f = input.files[0]; if (!f) return;
+                const r = new FileReader(); r.onload = (e) => { 
+                    document.getElementById('palette-input').value = e.target.result; 
+                    processPalette(e.target.result); 
+                }; r.readAsText(f);
             };
 
             window.applyManualPalette = () => processPalette(document.getElementById('palette-input').value);
 
             function processPalette(text) {
-                const palette = {};
-                text.split('\n').forEach(line => {
-                    const match = line.match(/--(text|background|primary|secondary|accent):\s*(#[0-9a-fA-F]{3,6});/);
-                    if (match) palette[match[1]] = match[2];
+                const p = {};
+                text.split('\n').forEach(l => { 
+                    const m = l.match(/--(text|background|primary|secondary|accent):\s*(#[0-9a-fA-F]{3,6});/); 
+                    if (m) p[m[1]] = m[2]; 
                 });
-                if (Object.keys(palette).length < 5) return showToast("Missing colors!");
-                localStorage.setItem('bmor_custom_palette', JSON.stringify(palette));
-                applyCustomThemeVars(palette);
+                if (Object.keys(p).length < 5) return showToast("Palette incomplete!");
+                localStorage.setItem('bmor_custom_palette', JSON.stringify(p));
+                applyCustomThemeVars(p);
                 applyTheme('custom');
                 currentThemeIndex = 3;
-                showToast("Palette Applied!");
+                showToast("Palette Applied");
             }
 
-            function applyCustomThemeVars(palette) {
-                const styleTag = document.getElementById('custom-theme-vars');
-                let css = `body.theme-custom {\n`;
-                for (const [key, val] of Object.entries(palette)) {
-                    css += `  --${key}: ${val};\n`;
-                }
-                css += `  --border: ${palette.secondary || palette.primary}44;\n}\n`;
-                css += `body.theme-custom header, body.theme-custom #editor-pane, body.theme-custom .pane-header, body.theme-custom #outline-pane { border-color: var(--border) !important; }\n`;
-                styleTag.innerHTML = css;
+            function applyCustomThemeVars(p) {
+                let css = `body.theme-custom { `;
+                for (const [k, v] of Object.entries(p)) { css += `--${k}: ${v}; `; }
+                css += `--border: ${p.secondary || p.primary}44; } `;
+                css += `body.theme-custom header, body.theme-custom #editor-pane, body.theme-custom .pane-header, body.theme-custom #outline-pane { border-color: var(--border) !important; }`;
+                document.getElementById('custom-theme-vars').innerHTML = css;
             }
 
-            window.changeGoogleFont = (f) => { document.body.style.setProperty('--preview-font', `'${f}', sans-serif`); loadGoogleFontLink('main', f); localStorage.setItem('bmor_md_font', f); updateFontButtonsStatus(); };
-            window.changeMonoFont = (f) => { document.body.style.setProperty('--code-font', `'${f}', monospace`); loadGoogleFontLink('mono', f); localStorage.setItem('bmor_md_mono_font', f); updateFontButtonsStatus(); };
+            window.changeGoogleFont = (f) => { 
+                document.body.style.setProperty('--preview-font', `'${f}', sans-serif`); 
+                loadFont('main', f); 
+                localStorage.setItem('bmor_md_font', f); 
+            };
+            window.changeMonoFont = (f) => { 
+                document.body.style.setProperty('--code-font', `'${f}', monospace`); 
+                loadFont('mono', f); 
+                localStorage.setItem('bmor_md_mono_font', f); 
+            };
 
-            function loadGoogleFontLink(type, fontName) {
-                const id = `google-font-link-${type}`;
+            function loadFont(type, n) {
+                const id = `font-link-${type}`;
                 let l = document.getElementById(id) || document.createElement('link');
                 l.id = id; l.rel = 'stylesheet'; document.head.appendChild(l);
-                l.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
+                l.href = `https://fonts.googleapis.com/css2?family=${n.replace(/ /g, '+')}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
             }
 
-            window.handleFontUpload = (input, style, weight, target) => {
-                const file = input.files[0];
-                if (!file) return;
-                const r = new FileReader();
-                r.onload = (e) => {
-                    const k = target === 'mono' ? 'font_mono' : `font_${style}_${weight}`;
+            window.handleFontUpload = (i, s, w, t) => {
+                const f = i.files[0]; if (!f) return;
+                const r = new FileReader(); r.onload = (e) => {
+                    const k = t === 'mono' ? 'font_mono' : `font_${s}_${w}`;
                     let d = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
                     d[k] = e.target.result; localStorage.setItem('bmor_custom_fonts', JSON.stringify(d));
                     applyCustomFonts();
-                };
-                r.readAsDataURL(file);
+                }; r.readAsDataURL(f);
             };
 
             function applyCustomFonts() {
@@ -570,33 +497,28 @@
                 let css = '';
                 if (Object.keys(d).length > 0) {
                     for (const [k, v] of Object.entries(d)) {
-                        if (k === 'font_mono') {
-                            css += `@font-face { font-family: 'CustomMonoFont'; src: url('${v}'); }\n`;
-                            document.body.style.setProperty('--code-font', "'CustomMonoFont', monospace");
-                        } else {
-                            const [_, s, w] = k.split('_');
-                            css += `@font-face { font-family: 'CustomPreviewFont'; src: url('${v}'); font-weight: ${w}; font-style: ${s}; }\n`;
+                        if (k === 'font_mono') { 
+                            css += `@font-face { font-family: 'CustomMono'; src: url('${v}'); } :root { --code-font: 'CustomMono', monospace !important; } `; 
+                        } else { 
+                            const [_, s, w] = k.split('_'); 
+                            css += `@font-face { font-family: 'CustomPreview'; src: url('${v}'); font-weight: ${w}; font-style: ${s}; } `; 
                         }
                     }
-                    if (d['font_normal_400'] || d['font_normal_700']) document.body.style.setProperty('--preview-font', "'CustomPreviewFont', sans-serif");
+                    if (d.font_normal_400 || d.font_normal_700) document.body.style.setProperty('--preview-font', "'CustomPreview', sans-serif");
                     document.getElementById('dynamic-fonts').innerHTML = css;
                 }
-                updateFontButtonsStatus();
-            }
-
-            function updateFontButtonsStatus() {
-                const d = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
                 const map = {'font_normal_400': 'btn-regular', 'font_normal_700': 'btn-bold', 'font_italic_400': 'btn-italic', 'font_italic_700': 'btn-bolditalic', 'font_mono': 'btn-mono'};
                 Object.entries(map).forEach(([k, id]) => { const b = document.getElementById(id); if (b) b.classList.toggle('loaded', !!d[k]); });
             }
-
-            window.resetFonts = () => { localStorage.clear(); location.reload(); };
 
             window.applyTheme = (t) => {
                 themes.forEach(x => document.body.classList.remove(`theme-${x}`));
                 if (t !== 'sunny') document.body.classList.add(`theme-${t}`);
                 document.getElementById('theme-label').textContent = t.charAt(0).toUpperCase() + t.slice(1);
-                ['sunny', 'electric', 'natural', 'custom'].forEach(x => document.getElementById(`icon-${x}`).classList.toggle('hidden', x !== t));
+                themes.forEach(x => {
+                    const icon = document.getElementById(`icon-${x}`);
+                    if (icon) icon.classList.toggle('hidden', x !== t);
+                });
                 localStorage.setItem('bmor_md_theme', t);
             };
 
@@ -604,62 +526,67 @@
                 currentThemeIndex = (currentThemeIndex + 1) % themes.length;
                 if (themes[currentThemeIndex] === 'custom' && !localStorage.getItem('bmor_custom_palette')) currentThemeIndex = 0;
                 applyTheme(themes[currentThemeIndex]);
+                showToast(`Theme: ${themes[currentThemeIndex].toUpperCase()}`);
             };
 
             window.downloadFile = () => {
                 const b = new Blob([markdownInput.value], { type: 'text/markdown' });
-                const u = URL.createObjectURL(b);
-                const a = document.createElement('a'); a.href = u; a.download = 'bmor.md'; a.click();
+                const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'bmor.md'; a.click();
             };
 
             window.triggerUpload = () => fileUpload.click();
             fileUpload.addEventListener('change', (e) => {
-                const f = e.target.files[0];
-                if (!f) return;
-                const r = new FileReader();
-                r.onload = (e) => { markdownInput.value = e.target.result; updatePreview(); };
-                r.readAsText(f);
+                const f = e.target.files[0]; if (!f) return;
+                const r = new FileReader(); r.onload = (e) => { markdownInput.value = e.target.result; window.updatePreview(); }; r.readAsText(f);
             });
 
             window.toggleZen = () => {
-                const isZen = previewPane.classList.toggle('hidden-pane');
-                outlinePane.classList.add('hidden-pane');
-                markdownInput.classList.toggle('max-w-7xl', isZen);
-                markdownInput.classList.toggle('mx-auto', isZen);
-                markdownInput.classList.toggle('w-full', isZen);
+                const pp = document.getElementById('preview-pane');
+                const op = document.getElementById('outline-pane');
+                const mi = document.getElementById('markdown-input');
                 const zb = document.getElementById('zenBtn');
+                
+                const isZen = pp.classList.toggle('hidden-pane');
+                op.classList.add('hidden-pane');
+                
+                mi.classList.toggle('max-w-7xl', isZen);
+                mi.classList.toggle('mx-auto', isZen);
+                
                 zb.style.backgroundColor = isZen ? 'var(--primary)' : '';
                 zb.style.color = isZen ? 'white' : '';
+                showToast(isZen ? "Zen Mode Active" : "View Restored");
             };
 
             function showToast(m) {
                 const t = document.getElementById('toast');
-                document.getElementById('toast-text').textContent = m;
+                const tt = document.getElementById('toast-text');
+                if (!t || !tt) return;
+                tt.textContent = m;
                 t.style.background = 'var(--text)'; t.style.color = 'var(--background)';
-                t.classList.add('visible'); setTimeout(() => t.classList.remove('visible'), 3000);
+                t.classList.add('visible'); 
+                setTimeout(() => t.classList.remove('visible'), 3000);
             }
 
-            function populatePickers() {
-                const p1 = document.getElementById('google-font-picker');
-                googleFonts.sort().forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; p1.appendChild(o); });
-                const p2 = document.getElementById('google-mono-picker');
-                googleMonoFonts.sort().forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; p2.appendChild(o); });
-            }
+            const g1 = ["Inter", "Roboto", "Open Sans", "Montserrat", "Lato", "Poppins", "Playfair Display", "Merriweather", "Lora", "Fira Sans", "Raleway", "Quicksand", "Dancing Script", "Spectral"];
+            const g2 = ["Fira Code", "Source Code Pro", "Roboto Mono", "JetBrains Mono", "Space Mono", "IBM Plex Mono"];
+            const p1 = document.getElementById('google-font-picker');
+            g1.sort().forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; p1.appendChild(o); });
+            const p2 = document.getElementById('google-mono-picker');
+            g2.sort().forEach(f => { const o = document.createElement('option'); o.value = o.textContent = f; p2.appendChild(o); });
 
-            populatePickers();
             const st = localStorage.getItem('bmor_md_theme') || 'sunny';
             const sp = localStorage.getItem('bmor_custom_palette');
             if (sp) applyCustomThemeVars(JSON.parse(sp));
             applyTheme(st);
             const sf = localStorage.getItem('bmor_md_font') || 'Inter';
-            document.getElementById('google-font-picker').value = sf; changeGoogleFont(sf);
+            p1.value = sf; changeGoogleFont(sf);
             const sm = localStorage.getItem('bmor_md_mono_font') || 'Fira Code';
-            document.getElementById('google-mono-picker').value = sm; changeMonoFont(sm);
+            p2.value = sm; changeMonoFont(sm);
             applyCustomFonts();
 
-            markdownInput.value = localStorage.getItem('bmor_md_content') || `# Welcome to BMOR\n\n#### Level 4 Heading\n##### Level 5 Heading\n###### Level 6 Heading\n\n**Note:** Blockquotes work now!\n\n* Nested items\n    * Sub-item\n\n- [x] Task completed\n\nInline Math: $E = mc^2$\n\nDisplay Math:\n$$e^{i\\pi} + 1 = 0$$\n\nFootnote test [^1]\n\n[^1]: Footnote content here.`;
-            updatePreview();
-            markdownInput.addEventListener('input', updatePreview);
+            markdownInput.value = localStorage.getItem('bmor_md_content') || `# Welcome to BMOR\n\n#### Level 4 Heading\n##### Level 5 Heading\n###### Level 6 Heading\n\n- [x] Done\n- [s] Working\n- [ ] Pending\n\nMath: $a^2 + b^2 = c^2$\n\nFootnote test [^1]\n\n[^1]: Footnote here.`;
+            window.updatePreview();
+            markdownInput.addEventListener('input', window.updatePreview);
             markdownInput.addEventListener('keydown', e => { 
                 if (e.key === 'Tab') { 
                     e.preventDefault(); 
@@ -668,6 +595,7 @@
                     markdownInput.selectionStart = markdownInput.selectionEnd = s + 2; 
                 }
             });
+            window.resetFonts = () => { localStorage.clear(); location.reload(); };
         };
     </script>
 </body>
