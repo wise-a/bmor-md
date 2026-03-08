@@ -356,16 +356,20 @@
             if (Object.keys(customData).length > 0) {
                 for (const [key, data] of Object.entries(customData)) {
                     if (key === 'font_mono') {
-                        css += `@font-face { font-family: 'CustomMonoFont'; src: url('${data}'); }`;
-                        css += `:root { --code-font: 'CustomMonoFont', monospace !important; }`;
+                        css += `@font-face { font-family: 'CustomMonoFont'; src: url('${data}'); }\n`;
+                        // Apply directly to body to override inline styles from library fonts
+                        document.body.style.setProperty('--code-font', "'CustomMonoFont', monospace");
                     } else {
                         const [_, style, weight] = key.split('_');
-                        css += `@font-face { font-family: 'CustomPreviewFont'; src: url('${data}'); font-weight: ${weight}; font-style: ${style}; }`;
+                        css += `@font-face { font-family: 'CustomPreviewFont'; src: url('${data}'); font-weight: ${weight}; font-style: ${style}; }\n`;
                     }
                 }
-                if (customData['font_normal_400'] || customData['font_normal_700']) {
-                    css += `#preview-content { --preview-font: 'CustomPreviewFont', sans-serif !important; }`;
+                
+                // If any main custom font weight is provided, set the preview font variable on body
+                if (customData['font_normal_400'] || customData['font_normal_700'] || customData['font_italic_400'] || customData['font_italic_700']) {
+                    document.body.style.setProperty('--preview-font', "'CustomPreviewFont', sans-serif");
                 }
+                
                 styleTag.innerHTML = css;
             }
             updateFontButtonsStatus();
@@ -462,6 +466,7 @@
             document.getElementById('google-mono-picker').value = savedMono;
             changeMonoFont(savedMono);
 
+            // applyCustomFonts runs last and overrides variables on body
             applyCustomFonts();
 
             const saved = localStorage.getItem('bmor_md_content');
