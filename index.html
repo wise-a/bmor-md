@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMOR Markdown Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style id="dynamic-fonts"></style>
+    <style>
+        :root {
+            --text: #191102;
+            --background: #fbf9f6;
+            --primary: #eea629;
+            --secondary: #daf584;
+            --accent: #98f14f;
+            --border: #e5e1da;
+            --preview-font: 'Inter', sans-serif;
+            --code-font: 'Fira Code', monospace;
+        }
+
+        body.theme-electric {
+            --text: #0b0700;
+            --background: #fbf9f6;
+            --primary: #ff9901;
+            --secondary: #67e4ff;
+            --accent: #433bff;
+        }
+
+        body.theme-natural {
+            --text: #181511;
+            --background: #fbf9f6;
+            --primary: #aa8e65;
+            --secondary: #d0bc9d;
+            --accent: #c9ab7d;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .editor-textarea {
+            font-family: var(--code-font);
+            resize: none;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) transparent;
+            background-color: transparent;
+            color: var(--text);
+        }
+
+        #preview-content {
+            line-height: 1.7;
+            color: var(--text);
+            font-family: var(--preview-font);
+        }
+
+        #preview-content h1 { 
+            font-size: 2.5rem; font-weight: 800; border-bottom: 4px solid var(--secondary); 
+            padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: var(--text);
+        }
+        #preview-content h2 { 
+            font-size: 1.75rem; font-weight: 700; margin-top: 2.5rem; 
+            margin-bottom: 1rem; color: var(--primary); 
+        }
+        #preview-content pre { 
+            background: #fff; padding: 1.25rem; border-radius: 12px; 
+            margin: 1.5rem 0; overflow-x: auto; border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+            font-family: var(--code-font) !important;
+        }
+        #preview-content code { font-family: var(--code-font) !important; }
+
+        .custom-scroll::-webkit-scrollbar { width: 8px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        
+        .transition-pane { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .hidden-pane { flex: 0 0 0% !important; opacity: 0; pointer-events: none; overflow: hidden; }
+        
+        .btn-action {
+            background-color: white;
+            border: 1px solid var(--border);
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            border-color: var(--primary);
+            background-color: var(--background);
+            color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .logo-box { background-color: var(--primary); transition: all 0.3s ease; }
+
+        #typography-panel {
+            position: fixed;
+            top: 70px;
+            right: 2rem;
+            width: 320px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            z-index: 50;
+            display: none;
+        }
+        #typography-panel.visible { display: block; animation: slideIn 0.2s ease-out; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .font-upload-btn {
+            font-size: 0.7rem;
+            padding: 6px 8px;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .font-upload-btn:hover { border-color: var(--primary); background: var(--background); }
+        .font-upload-btn.loaded { background: var(--secondary); border-style: solid; border-color: var(--primary); }
+    </style>
+</head>
+<body class="flex flex-col">
+
+    <!-- Header -->
+    <header class="h-16 flex items-center justify-between px-8 border-b border-[#e5e1da] bg-white/80 backdrop-blur-md z-10">
+        <div class="flex items-center gap-4">
+            <div class="w-10 h-10 logo-box rounded-xl flex items-center justify-center shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="m8 7 4-4 4 4"/><path d="m8 17 4 4 4-4"/></svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-extrabold tracking-tight" style="color: var(--text)">B<span style="color: var(--primary)">MOR</span></h1>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <button onclick="toggleTypography()" class="btn-action px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+                Type
+            </button>
+            <button onclick="cycleTheme()" class="btn-action px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold min-w-[120px]">
+                <div id="theme-icon-container">
+                    <svg id="icon-sunny" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
+                    <svg id="icon-electric" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 2-2 10h9L11 22l2-10H5L13 2z"/></svg>
+                    <svg id="icon-natural" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8a8 8 0 0 1-8 8"/><path d="M13 22c3 0 7-1 7-8"/></svg>
+                </div>
+                <span id="theme-label">Sunny</span>
+            </button>
+
+            <div class="h-6 w-[1px] bg-[#e5e1da] mx-1"></div>
+
+            <button onclick="triggerUpload()" class="btn-action px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload
+            </button>
+            <button onclick="downloadFile()" class="btn-action px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export
+            </button>
+            <button onclick="toggleZen()" id="zenBtn" class="p-2.5 btn-action rounded-lg" title="Zen Mode">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Typography Panel -->
+    <div id="typography-panel" class="p-6 custom-scroll">
+        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Typography Settings</h3>
+        
+        <div class="mb-6">
+            <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Main Font Library</label>
+            <select id="google-font-picker" onchange="changeGoogleFont(this.value)" class="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary bg-slate-50">
+            </select>
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Monospace Font Library</label>
+            <select id="google-mono-picker" onchange="changeMonoFont(this.value)" class="w-full p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-primary bg-slate-50 font-mono">
+            </select>
+        </div>
+
+        <div class="space-y-6 pt-4 border-t border-slate-100">
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Custom Main Font</label>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="font-upload-btn" id="btn-regular" onclick="document.getElementById('upload-regular').click()">Regular</div>
+                    <div class="font-upload-btn" id="btn-bold" onclick="document.getElementById('upload-bold').click()">Bold</div>
+                    <div class="font-upload-btn" id="btn-italic" onclick="document.getElementById('upload-italic').click()">Italic</div>
+                    <div class="font-upload-btn" id="btn-bolditalic" onclick="document.getElementById('upload-bolditalic').click()">Bold Italic</div>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-tighter mb-2 opacity-50">Custom Monospace Font</label>
+                <div class="font-upload-btn w-full py-3" id="btn-mono" onclick="document.getElementById('upload-mono').click()">Upload Custom Mono File</div>
+            </div>
+
+            <button onclick="resetFonts()" class="w-full py-2 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100">Clear All Settings</button>
+        </div>
+
+        <!-- Hidden Inputs -->
+        <input type="file" id="upload-regular" class="hidden" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(this, 'normal', '400', 'main')">
+        <input type="file" id="upload-bold" class="hidden" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(this, 'normal', '700', 'main')">
+        <input type="file" id="upload-italic" class="hidden" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(this, 'italic', '400', 'main')">
+        <input type="file" id="upload-bolditalic" class="hidden" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(this, 'italic', '700', 'main')">
+        <input type="file" id="upload-mono" class="hidden" accept=".ttf,.otf,.woff,.woff2" onchange="handleFontUpload(this, 'normal', '400', 'mono')">
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex overflow-hidden">
+        <div id="editor-pane" class="flex-1 flex flex-col border-r border-[#e5e1da] transition-pane bg-white/40">
+            <div class="px-6 py-3 border-b border-[#f0eee9] text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex justify-between items-center">
+                <span class="flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[var(--primary)]"></span>
+                    Source Editor
+                </span>
+                <span id="char-count">0 characters</span>
+            </div>
+            <textarea id="markdown-input" spellcheck="false" class="editor-textarea flex-1 p-10 outline-none focus:ring-0 text-lg custom-scroll leading-relaxed" placeholder="Type something amazing..."></textarea>
+        </div>
+
+        <div id="preview-pane" class="flex-1 flex flex-col transition-pane">
+            <div class="px-6 py-3 border-b border-white/50 bg-[#fdfcfb] text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                Live Preview
+            </div>
+            <div id="preview-container" class="flex-1 overflow-y-auto p-10 custom-scroll">
+                <div id="preview-content" class="max-w-3xl mx-auto"></div>
+            </div>
+        </div>
+    </main>
+
+    <input type="file" id="file-upload" accept=".md,.txt" class="hidden">
+    <div id="toast" class="px-8 py-3.5 rounded-2xl shadow-xl text-sm font-bold flex items-center gap-3">
+        <span id="toast-text">Message</span>
+    </div>
+
+    <script>
+        const markdownInput = document.getElementById('markdown-input');
+        const previewContent = document.getElementById('preview-content');
+        const fileUpload = document.getElementById('file-upload');
+        const charCount = document.getElementById('char-count');
+        const editorPane = document.getElementById('editor-pane');
+        const previewPane = document.getElementById('preview-pane');
+        
+        const themes = ['sunny', 'electric', 'natural'];
+        let currentThemeIndex = 0;
+
+        const googleFonts = [
+            "Inter", "Roboto", "Open Sans", "Montserrat", "Lato", "Poppins", "Playfair Display", 
+            "Merriweather", "Lora", "PT Serif", "Fira Sans", "Ubuntu", "Mukta", "Nunito", 
+            "Raleway", "Quicksand", "Oswald", "Bebas Neue", "Josefin Sans", "Kanit", "Work Sans", 
+            "DM Sans", "Source Sans Pro", "Crimson Text", "Arvo", "Cormorant Garamond", 
+            "Libre Baskerville", "Bitter", "Pacifico", "Caveat", "Dancing Script", "Spectral"
+        ];
+
+        const googleMonoFonts = [
+            "Fira Code", "Source Code Pro", "Roboto Mono", "Ubuntu Mono", "Courier Prime", 
+            "JetBrains Mono", "Inconsolata", "Space Mono", "IBM Plex Mono", "Share Tech Mono"
+        ];
+
+        marked.setOptions({
+            highlight: function(code, lang) {
+                if (lang && hljs.getLanguage(lang)) return hljs.highlight(code, { language: lang }).value;
+                return hljs.highlightAuto(code).value;
+            },
+            breaks: true, gfm: true
+        });
+
+        function updatePreview() {
+            const content = markdownInput.value;
+            previewContent.innerHTML = marked.parse(content);
+            charCount.textContent = `${content.length} characters`;
+            document.querySelectorAll('pre code').forEach(block => hljs.highlightElement(block));
+            localStorage.setItem('bmor_md_content', content);
+        }
+
+        function toggleTypography() {
+            document.getElementById('typography-panel').classList.toggle('visible');
+        }
+
+        function populatePickers() {
+            const picker = document.getElementById('google-font-picker');
+            googleFonts.sort().forEach(font => {
+                const opt = document.createElement('option');
+                opt.value = font; opt.textContent = font;
+                picker.appendChild(opt);
+            });
+
+            const monoPicker = document.getElementById('google-mono-picker');
+            googleMonoFonts.sort().forEach(font => {
+                const opt = document.createElement('option');
+                opt.value = font; opt.textContent = font;
+                monoPicker.appendChild(opt);
+            });
+        }
+
+        function changeGoogleFont(fontName) {
+            document.body.style.setProperty('--preview-font', `'${fontName}', sans-serif`);
+            loadGoogleFontLink('main', fontName);
+            localStorage.setItem('bmor_md_font', fontName);
+            updateFontButtonsStatus();
+        }
+
+        function changeMonoFont(fontName) {
+            document.body.style.setProperty('--code-font', `'${fontName}', monospace`);
+            loadGoogleFontLink('mono', fontName);
+            localStorage.setItem('bmor_md_mono_font', fontName);
+            updateFontButtonsStatus();
+        }
+
+        function loadGoogleFontLink(type, fontName) {
+            const linkId = `google-font-link-${type}`;
+            let link = document.getElementById(linkId);
+            if (!link) {
+                link = document.createElement('link');
+                link.id = linkId; link.rel = 'stylesheet';
+                document.head.appendChild(link);
+            }
+            link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:ital,wght@0,400;0,700;1,400;1,700&display=swap`;
+        }
+
+        function handleFontUpload(input, style, weight, target) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                const fontKey = target === 'mono' ? 'font_mono' : `font_${style}_${weight}`;
+                let customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
+                customData[fontKey] = base64;
+                localStorage.setItem('bmor_custom_fonts', JSON.stringify(customData));
+                applyCustomFonts();
+                showToast(`Applied custom ${target === 'mono' ? 'Monospace' : style + ' ' + weight}`);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applyCustomFonts() {
+            const customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
+            const styleTag = document.getElementById('dynamic-fonts');
+            let css = '';
+            
+            if (Object.keys(customData).length > 0) {
+                for (const [key, data] of Object.entries(customData)) {
+                    if (key === 'font_mono') {
+                        css += `@font-face { font-family: 'CustomMonoFont'; src: url('${data}'); }`;
+                        css += `:root { --code-font: 'CustomMonoFont', monospace !important; }`;
+                    } else {
+                        const [_, style, weight] = key.split('_');
+                        css += `@font-face { font-family: 'CustomPreviewFont'; src: url('${data}'); font-weight: ${weight}; font-style: ${style}; }`;
+                    }
+                }
+                if (customData['font_normal_400'] || customData['font_normal_700']) {
+                    css += `#preview-content { --preview-font: 'CustomPreviewFont', sans-serif !important; }`;
+                }
+                styleTag.innerHTML = css;
+            }
+            updateFontButtonsStatus();
+        }
+
+        function updateFontButtonsStatus() {
+            const customData = JSON.parse(localStorage.getItem('bmor_custom_fonts') || '{}');
+            document.getElementById('btn-regular').classList.toggle('loaded', !!customData['font_normal_400']);
+            document.getElementById('btn-bold').classList.toggle('loaded', !!customData['font_normal_700']);
+            document.getElementById('btn-italic').classList.toggle('loaded', !!customData['font_italic_400']);
+            document.getElementById('btn-bolditalic').classList.toggle('loaded', !!customData['font_italic_700']);
+            document.getElementById('btn-mono').classList.toggle('loaded', !!customData['font_mono']);
+        }
+
+        function resetFonts() {
+            localStorage.removeItem('bmor_custom_fonts');
+            localStorage.removeItem('bmor_md_font');
+            localStorage.removeItem('bmor_md_mono_font');
+            document.getElementById('dynamic-fonts').innerHTML = '';
+            location.reload();
+        }
+
+        function applyTheme(themeName) {
+            themes.forEach(t => document.body.classList.remove(`theme-${t}`));
+            if (themeName !== 'sunny') document.body.classList.add(`theme-${themeName}`);
+            document.getElementById('theme-label').textContent = themeName.charAt(0).toUpperCase() + themeName.slice(1);
+            document.getElementById('icon-sunny').classList.toggle('hidden', themeName !== 'sunny');
+            document.getElementById('icon-electric').classList.toggle('hidden', themeName !== 'electric');
+            document.getElementById('icon-natural').classList.toggle('hidden', themeName !== 'natural');
+            localStorage.setItem('bmor_md_theme', themeName);
+        }
+
+        function cycleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            applyTheme(themes[currentThemeIndex]);
+            showToast(`Theme: ${themes[currentThemeIndex].toUpperCase()}`);
+        }
+
+        function downloadFile() {
+            const content = markdownInput.value;
+            if (!content) return showToast("Nothing to export!");
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'bmor-document.md'; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function triggerUpload() { fileUpload.click(); }
+        fileUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                markdownInput.value = e.target.result;
+                updatePreview();
+                showToast(`Loaded "${file.name}"`);
+            };
+            reader.readAsText(file);
+        });
+
+        function toggleZen() {
+            const zenBtn = document.getElementById('zenBtn');
+            previewPane.classList.toggle('hidden-pane');
+            markdownInput.classList.toggle('max-w-4xl');
+            markdownInput.classList.toggle('mx-auto');
+            const isZen = previewPane.classList.contains('hidden-pane');
+            zenBtn.style.backgroundColor = isZen ? 'var(--primary)' : '';
+            zenBtn.style.color = isZen ? 'white' : '';
+            showToast(isZen ? "Zen Mode Active" : "Normal Mode");
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').textContent = msg;
+            toast.style.background = 'var(--text)';
+            toast.style.color = 'var(--background)';
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 3000);
+        }
+
+        window.onload = () => {
+            populatePickers();
+            
+            const savedTheme = localStorage.getItem('bmor_md_theme') || 'sunny';
+            currentThemeIndex = themes.indexOf(savedTheme);
+            applyTheme(savedTheme);
+
+            const savedFont = localStorage.getItem('bmor_md_font') || 'Inter';
+            document.getElementById('google-font-picker').value = savedFont;
+            changeGoogleFont(savedFont);
+
+            const savedMono = localStorage.getItem('bmor_md_mono_font') || 'Fira Code';
+            document.getElementById('google-mono-picker').value = savedMono;
+            changeMonoFont(savedMono);
+
+            applyCustomFonts();
+
+            const saved = localStorage.getItem('bmor_md_content');
+            markdownInput.value = saved || `# Welcome to BMOR 🎨
+
+Your space for high-end typography.
+
+### Code Typography
+You can now change the monospace font used in these code blocks and the editor! Try picking **JetBrains Mono** or uploading your own font file in the Type settings.
+
+\`\`\`javascript
+function checkTypography() {
+  const font = "Source Code Pro";
+  console.log(\`Rendering in \${font}...\`);
+}
+\`\`\`
+
+> "BMOR: Because every character counts."`;
+            updatePreview();
+        };
+
+        markdownInput.addEventListener('keydown', function(e) {
+            if (e.key == 'Tab') {
+                e.preventDefault();
+                var start = this.selectionStart;
+                var end = this.selectionEnd;
+                this.value = this.value.substring(0, start) + "  " + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 2;
+            }
+        });
+    </script>
+</body>
+</html>
